@@ -1,0 +1,28 @@
+{
+    "name": "sfls-network-helper",
+    "main": "main.js",
+    "window": {
+        "title": "SFLS-Network-Helper",
+        "toolbar": true,
+        "resizable": false,
+        "width":595,
+        "height":630,
+        "icon": "www/images/login.png",
+        "frame": false,
+        "position": "center",
+        "kiosk": false,
+        "transparent": true
+    },
+    "chromium-args" : "--ignore-gpu-blacklist --disable-crash-handler=true --enable-vulkan",
+    "maintainers":[ {
+        "name": "WilliamYan",
+        "email": "williamyxn@gmail.com",
+       " web": "https://github.com/W-YXN"
+     }],
+     "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/W-YXN/SFLS-Network-Helper/blob/master/LICENCE"
+        }
+     ]
+}
