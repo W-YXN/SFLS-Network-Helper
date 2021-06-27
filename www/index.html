@@ -16,37 +16,35 @@
 
 <body>
 	<div style="position:fixed;top:0px;right:0px;-webkit-app-region:no-drag;">
-		<image src="images/close.png" style="position:fixed;top:0px;right:0px;cursor:pointer;width:48px"
+		<image src="images/rd.webp" style="position:fixed;bottom:0px;right:0px;cursor:pointer;width:48px"
 			onClick="hide()"></image>
 	</div>
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
-				<form class="login100-form validate-form">
-					<span class="login100-form-title p-b-49">登录</span>
+				<span class="login100-form-title p-b-49">登录</span>
 
-					<div class="wrap-input100 validate-input m-b-23" data-validate="请输入用户名">
-						<span class="label-input100">用户名</span>
-						<input class="input100" type="text" id="account" placeholder="请输入用户名" autocomplete="off">
-						<span class="focus-input100" data-symbol="&#xf206;"></span>
-					</div>
+				<div class="wrap-input100 validate-input m-b-23" data-validate="请输入用户名">
+					<span class="label-input100">用户名</span>
+					<input class="input100" type="text" id="account" placeholder="请输入用户名" autocomplete="off">
+					<span class="focus-input100" data-symbol="&#xf206;"></span>
+				</div>
 
-					<div class="wrap-input100 validate-input" data-validate="请输入密码">
-						<span class="label-input100">密码</span>
-						<input class="input100" type="password" name="pass" placeholder="请输入密码">
-						<span class="focus-input100" data-symbol="&#xf190;"></span>
+				<div class="wrap-input100 validate-input" data-validate="请输入密码">
+					<span class="label-input100">密码</span>
+					<input class="input100" type="password" id='password' name="pass" placeholder="请输入密码">
+					<span class="focus-input100" data-symbol="&#xf190;"></span>
+				</div>
+				<div class="txt1 text-center p-t-54 p-b-20">
+					<span>本机时间：</span><span id='localtime'></span>
+					<!--<span>网络时间：</span><span id='settime'></span>-->
+				</div>
+				<div class="container-login100-form-btn">
+					<div class="wrap-login100-form-btn">
+						<div class="login100-form-bgbtn"></div>
+						<button class="login100-form-btn" onclick="usrLogin()">登 录</button>
 					</div>
-					<div class="txt1 text-center p-t-54 p-b-20">
-						<span>本机时间：</span><span id='localtime'></span>
-						<span>网络时间：</span><span id='settime'></span>
-					</div>
-					<div class="container-login100-form-btn">
-						<div class="wrap-login100-form-btn">
-							<div class="login100-form-bgbtn"></div>
-							<button class="login100-form-btn">登 录</button>
-						</div>
-					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -61,7 +59,7 @@
 		var tray = new nw.Tray({
 			title: '网络助手',
 			icon: 'www/images/login.png',
-			tooltip: "右键打开苏外网络助手\nMade by WilliamYan"
+			tooltip: "点击打开苏外网络助手\nMade by WilliamYan"
 		});//定义托盘
 
 		//添加菜单--
@@ -86,16 +84,23 @@
 			label: '退出',
 			click: function () {
 				win.close(true);
+				//App.closeAllWindows();
 			}
 		}));
 
 		tray.menu = menu;
 		//--菜单添加完毕 20210627
+		tray.on('click', function () {
+			if (isShowWindow) {
+				win.hide();
+				isShowWindow = false;
+			} else {
+				win.show();
+				isShowWindow = true;
+			}
+		})
 
-
-		var win = nw.Window.get();//再次获取指针
-
-		function addlog(log) {
+		function addLog(log) {
 			new window.Notification('提示', {
 				body: log
 			});
@@ -156,7 +161,7 @@
 
 		var keep = false;
 		var checkMode = function () {
-			setTimeout(checkInterval, document.getElementById("time").value)
+			setTimeout(checkInterval, 30000)
 			addLog("智能维持服务已经启动");
 			keep = true;
 		}
@@ -176,7 +181,7 @@
 			httpRequest.onreadystatechange = function check() {
 				if (httpRequest.readyState == 4) {
 					if (httpRequest.status == 204) {
-						//addLog("网络已连通，无需处理");
+						//addLog("网络已连通，无需处理");//!!!!
 					} else {
 						addLog("网络未连接，正在发起登录");
 						tryLogin();
@@ -207,23 +212,31 @@
 				return i;
 			}
 		}
-		var win = nw.Window.get();//再次获取指针
 		var hide = function () {
 			win.hide();
 			isShowWindow = false;
-			addlog("👇已最小化到托盘区~")
+			addLog("👇已最小化到托盘区~")
 		}
 		function showLocalTime() {
 			document.getElementById('localtime').innerHTML = getCurrentTime();
-			setTimeout(showLocalTime, 1010);
+			setTimeout(showLocalTime, 1000);
 		}
 		//主程序执行部分：
 
 		showLocalTime();
-
-
+		storage.setItem("checkurl", "http://connect.rom.miui.com/generate_204");
 		var saved = storage.getItem("account") != null;
+		if (saved) {
+			loadAccount();
+		}
+		function usrLogin() {
+			saveAccount();
+			tryLogin();
+			//testNet();
+			checkMode();
+		}
 	</script>
+	<!--
 	<script>
 		$(document).ready(function () {
 			var $settime = document.getElementById('settime');
@@ -311,7 +324,7 @@
 			}
 		});
 	</script>
-
+-->
 </body>
 
 </html>
